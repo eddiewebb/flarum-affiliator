@@ -67,5 +67,13 @@ class AffiliatorSerializerTests extends TestCase
         $this->assertEquals($expected,$output,"The affiliate link was not inserted");
     }
 
+    public function testSuffixIsNotRepetative()
+    {
+        $input = "Checkout https://example.com, seriously love https://example.com";
+        $expected = "Checkout https://example.com?aff=123, , seriously love https://example.com?aff=123";
+        $output = $this->serializer->affiliate($input);
+        $this->assertEquals($expected,$output,"The affiliate link was not inserted");
+    }
+
     // ...
 }

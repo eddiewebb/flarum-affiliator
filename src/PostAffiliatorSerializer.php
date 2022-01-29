@@ -4,6 +4,8 @@ namespace Webbinaro\Affiliator;
 
 use Flarum\Settings\SettingsRepositoryInterface;
 
+use Flarum\Post\Event\Saving;
+
 class PostAffiliatorSerializer
 {
     /**
@@ -14,6 +16,10 @@ class PostAffiliatorSerializer
     public function __construct(SettingsRepositoryInterface $settings)
     {
         $this->settings = $settings;
+    }
+
+    public function handle(Saving $event){
+
     }
     /**
      * Attaches affiliate tracking into to content payload
