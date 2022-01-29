@@ -1,4 +1,4 @@
-# Age Checker for Flarum
+# Affiliator Affiliate Link Manager for Flarum
 
 ![License](https://img.shields.io/github/license/eddiewebb/flarum-affiliator) [![Latest Stable Version](https://img.shields.io/packagist/v/webbinaro/flarum-affiliator.svg)](https://packagist.org/packages/webbinaro/flarum-affiliator) [![Total Downloads](https://img.shields.io/packagist/dt/webbinaro/flarum-affiliator.svg)](https://packagist.org/packages/webbinaro/flarum-affiliator)https://img.shields.io/packagist/dm/webbinaro/flarum-affiliator
 

@@ -2,31 +2,31 @@
 
 namespace Webbinaro\Affiliator;
 
-use Flarum\Api\Serializer\PostSerializer;
 use Flarum\Settings\SettingsRepositoryInterface;
 
-class PostAffiliatorSerializer extends PostSerializer
+class PostAffiliatorSerializer
 {
     /**
     * @var SettingsRepositoryInterface
     */
     protected $settings;
 
-
+    public function __construct(SettingsRepositoryInterface $settings)
+    {
+        $this->settings = $settings;
+    }
     /**
      * Attaches affiliate tracking into to content payload
      *
      * @param \Flarum\Post\Post $post
      * @throws InvalidArgumentException
      */
-    protected function getDefaultAttributes($post)
+    public function affiliate($content)
     {
-        $attributes = parent::getDefaultAttributes($post);
         if( $this->settings->get('webbinaro-affiliator.settings.aff.list')) {
             $afflist=$this->settings->get('webbinaro-affiliator.settings.aff.list');
             $partners = $this->parseAffiliateList($afflist);
             //return array('content'=>print_r($partners,true));
-            $content = $attributes['content'];
             $all_urls = array();
             preg_match_all('#\bhttps?://[^\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/))#', $content, $all_matches,PREG_SET_ORDER);
             foreach( $all_matches as $match){
@@ -41,14 +41,11 @@ class PostAffiliatorSerializer extends PostSerializer
                     $content = str_replace($match[0],$this->build_url($each),$content);
                 }
              }
-            $attributes['content'] = $content;
+            $content = $content;
         }
-        return $attributes;
+        return $content;
     }
 
-    function setSettings(SettingsRepositoryInterface $settings){
-        $this->settings = $settings;
-    }
 
     function build_url(array $parts) {
         return (isset($parts['scheme']) ? "{$parts['scheme']}:" : '') . 

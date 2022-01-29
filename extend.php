@@ -12,6 +12,7 @@
 namespace Webbinaro\Affiliator;
 
 use Flarum\Extend;
+use Webbinaro\Affiliator\PostAffiliatorSerializer;
 return [
     (new Extend\Frontend('forum'))
         ->js(__DIR__.'/js/dist/forum.js')
@@ -20,8 +21,8 @@ return [
         ->js(__DIR__.'/js/dist/admin.js')
         ->css(__DIR__.'/less/admin.less'),
     new Extend\Locales(__DIR__.'/locale'),
-    (new Extend\ApiController(ListDiscussionsController::class))
-        ->prepareDataForSerialization(function ($controller, $data, $request, $document) {
-            $data->load('myCustomRelation');
-        }),
+    (new Extend\ApiSerializer(PostSerializer::class)))
+    ->attribute('content', function($serializer, $tag) {
+        return $tag->is_article_series;
+    }),
     ];

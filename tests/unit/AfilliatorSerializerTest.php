@@ -33,19 +33,10 @@ class AffiliatorSerializerTests extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->actor = m::mock(User::class);
-        $this->actor->shouldReceive('can')->andReturn(true);
-        $request = m::mock(Request::class)->makePartial();
-        $request->shouldReceive('getAttribute->getActor')->andReturn($this->actor);
         $settingsRepo = m::mock(SettingsRepositoryInterface::class);
         $settingsRepo->shouldReceive('get')->with('webbinaro-affiliator.settings.aff.list')->andReturn($this->afflist);
-        $this->post = m::mock(Post::class)->makePartial();
-        $this->logReporter = m::mock(LogReporter::class);
-        $this->translator = m::mock(TranslatorInterface::class);
-
-        $this->serializer = new PostAffiliatorSerializer($this->logReporter,$this->translator);
-        $this->serializer->setRequest($request);
-        $this->serializer->setSettings($settingsRepo);
+       
+        $this->serializer = new PostAffiliatorSerializer($settingsRepo);
 
     }
 
@@ -54,26 +45,26 @@ class AffiliatorSerializerTests extends TestCase
      */
     public function testSuffixAddedToNonQueryHttp()
     {
-        $this->post->shouldReceive('getAttribute')->with('content')->andReturn("Checkout https://example2.com, it's awesome.");
+        $input = "Checkout https://example2.com, it's awesome.";
         $expected = "Checkout https://example2.com?daffy=123, it's awesome.";
-        $output = $this->serializer->getAttributes($this->post);
-        $this->assertEquals($expected,$output['content'],"The affiliate link was not inserted");
+        $output = $this->serializer->affiliate($input);
+        $this->assertEquals($expected,$output,"The affiliate link was not inserted");
     }
 
     public function testSuffixAddedToQueryHttps()
     {
-        $this->post->shouldReceive('getAttribute')->with('content')->andReturn("Checkout https://example.com?animal=dog, it's awesome.");
+        $input = "Checkout https://example.com?animal=dog, it's awesome.";
         $expected = "Checkout https://example.com?animal=dog&aff=123, it's awesome.";
-        $output = $this->serializer->getAttributes($this->post);
-        $this->assertEquals($expected,$output['content'],"The affiliate link was not inserted");
+        $output = $this->serializer->affiliate($input);
+        $this->assertEquals($expected,$output,"The affiliate link was not inserted");
     }
 
     public function testSuffixAddedToMultipleUrls()
     {
-        $this->post->shouldReceive('getAttribute')->with('content')->andReturn("Checkout https://example.com?animal=dog, it's awesome, better than https://example2.com, though admittedly not quite like http://example3.com");
+        $input = "Checkout https://example.com?animal=dog, it's awesome, better than https://example2.com, though admittedly not quite like http://example3.com";
         $expected = "Checkout https://example.com?animal=dog&aff=123, it's awesome, better than https://example2.com?daffy=123, though admittedly not quite like http://example3.com";
-        $output = $this->serializer->getAttributes($this->post);
-        $this->assertEquals($expected,$output['content'],"The affiliate link was not inserted");
+        $output = $this->serializer->affiliate($input);
+        $this->assertEquals($expected,$output,"The affiliate link was not inserted");
     }
 
     // ...
