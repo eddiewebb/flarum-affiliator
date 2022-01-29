@@ -3,10 +3,15 @@
 namespace Webbinaro\Affiliator;
 
 use Flarum\Api\Serializer\PostSerializer;
+use Flarum\Settings\SettingsRepositoryInterface;
 
 class PostAffiliatorSerializer extends PostSerializer
 {
-    private $partners = array();
+    /**
+    * @var SettingsRepositoryInterface
+    */
+    protected $settings;
+
 
     /**
      * Attaches affiliate tracking into to content payload
@@ -16,29 +21,34 @@ class PostAffiliatorSerializer extends PostSerializer
      */
     protected function getDefaultAttributes($post)
     {
-        $this->partners["example2.com"] = array("daffy","123");
-        $this->partners["example.com"] = array("aff","123");
         $attributes = parent::getDefaultAttributes($post);
-        $content = $attributes['content'];
-        $all_urls = array();
-        preg_match_all('#\bhttps?://[^\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/))#', $content, $all_matches,PREG_SET_ORDER);
-        foreach( $all_matches as $match){
-            $each = parse_url($match[0]);
-            if(isset($each['host']) && array_key_exists( $each['host'], $this->partners)){
-                $query=array();
-                if(array_key_exists('query',$each) && ! is_null($each['query'])){
-                    parse_str($each['query'],$query);
+        if( $this->settings->get('webbinaro-affiliator.settings.aff.list')) {
+            $afflist=$this->settings->get('webbinaro-affiliator.settings.aff.list');
+            $partners = $this->parseAffiliateList($afflist);
+            //return array('content'=>print_r($partners,true));
+            $content = $attributes['content'];
+            $all_urls = array();
+            preg_match_all('#\bhttps?://[^\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/))#', $content, $all_matches,PREG_SET_ORDER);
+            foreach( $all_matches as $match){
+                $each = parse_url($match[0]);
+                if(isset($each['host']) && array_key_exists( $each['host'], $partners)){
+                    $info = $partners[$each['host']];
+                    if(array_key_exists('query',$each) && ! is_null($each['query'])){
+                        parse_str($each['query'],$existing_query);
+                        $info = array_merge($existing_query,$info);
+                    }
+                    $each['query'] = http_build_query($info);
+                    $content = str_replace($match[0],$this->build_url($each),$content);
                 }
-                $tag = $this->partners[$each['host']];
-                $query[$tag[0]] = $tag[1];
-                $each['query'] = http_build_query($query);
-                $content = str_replace($match[0],$this->build_url($each),$content);
-            }
-         }
-        $attributes['content'] = $content;
+             }
+            $attributes['content'] = $content;
+        }
         return $attributes;
     }
 
+    function setSettings(SettingsRepositoryInterface $settings){
+        $this->settings = $settings;
+    }
 
     function build_url(array $parts) {
         return (isset($parts['scheme']) ? "{$parts['scheme']}:" : '') . 
@@ -51,5 +61,17 @@ class PostAffiliatorSerializer extends PostSerializer
             (isset($parts['path']) ? "{$parts['path']}" : '') . 
             (isset($parts['query']) ? "?{$parts['query']}" : '') . 
             (isset($parts['fragment']) ? "#{$parts['fragment']}" : '');
+    }
+
+    private function parseAffiliateList(string $list){
+        $items = explode(',',$list);
+        $partners = array();
+        foreach ($items as $item) {
+            $partner=parse_url($item);
+            $query_array = array();
+            parse_str($partner['query'],$query_array);
+            $partners[$partner['host']] = $query_array;
+        }
+        return $partners;
     }
 }
