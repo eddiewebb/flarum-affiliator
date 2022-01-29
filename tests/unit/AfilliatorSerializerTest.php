@@ -58,6 +58,13 @@ class AffiliatorSerializerTests extends TestCase
         $output = $this->serializer->affiliate($input);
         $this->assertEquals($expected,$output,"The affiliate link was not inserted");
     }
+    public function testUnkownHostsAreIgnored()
+    {
+        $input = "Checkout https://crocs.com?, it's awesome";
+        $expected = "Checkout https://crocs.com?, it's awesome";
+        $output = $this->serializer->affiliate($input);
+        $this->assertEquals($expected,$output,"The affiliate link was not inserted");
+    }
 
     public function testSuffixAddedToMultipleUrls()
     {
@@ -70,7 +77,7 @@ class AffiliatorSerializerTests extends TestCase
     public function testSuffixIsNotRepetative()
     {
         $input = "Checkout https://example.com, seriously love https://example.com";
-        $expected = "Checkout https://example.com?aff=123, , seriously love https://example.com?aff=123";
+        $expected = "Checkout https://example.com?aff=123, seriously love https://example.com?aff=123";
         $output = $this->serializer->affiliate($input);
         $this->assertEquals($expected,$output,"The affiliate link was not inserted");
     }

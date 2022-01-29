@@ -13,14 +13,15 @@ class PostAffiliatorSerializer
     */
     protected $settings;
 
+    private $partners = array();
+
     public function __construct(SettingsRepositoryInterface $settings)
     {
         $this->settings = $settings;
+        $afflist=$this->settings->get('webbinaro-affiliator.settings.aff.list');
+        $this->partners = $this->parseAffiliateList($afflist);
     }
 
-    public function handle(Saving $event){
-
-    }
     /**
      * Attaches affiliate tracking into to content payload
      *
@@ -29,25 +30,29 @@ class PostAffiliatorSerializer
      */
     public function affiliate($content)
     {
-        if( $this->settings->get('webbinaro-affiliator.settings.aff.list')) {
-            $afflist=$this->settings->get('webbinaro-affiliator.settings.aff.list');
-            $partners = $this->parseAffiliateList($afflist);
-            //return array('content'=>print_r($partners,true));
-            $all_urls = array();
-            preg_match_all('#\bhttps?://[^\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/))#', $content, $all_matches,PREG_SET_ORDER);
-            foreach( $all_matches as $match){
-                $each = parse_url($match[0]);
-                if(isset($each['host']) && array_key_exists( $each['host'], $partners)){
-                    $info = $partners[$each['host']];
-                    if(array_key_exists('query',$each) && ! is_null($each['query'])){
-                        parse_str($each['query'],$existing_query);
-                        $info = array_merge($existing_query,$info);
+        if( sizeof($this->partners) > 0 ) {
+            return preg_replace_callback('#\bhttps?://[^\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/))#',
+            function($each_match){
+                $newlink="";
+                //return print_r($matches);
+                //foreach( $matches as $match){
+                    $each = parse_url($each_match[0]);
+                    if(isset($each['host']) && array_key_exists( $each['host'], $this->partners)){
+                        $info = $this->partners[$each['host']];
+                        if(array_key_exists('query',$each) && ! is_null($each['query'])){
+                            parse_str($each['query'],$existing_query);
+                            $info = array_merge($existing_query,$info);
+                        }
+                        $each['query'] = http_build_query($info);
+                        $newlink = $this->build_url($each);
+                    }else{
+                        return $each_match[0]; //no replace
                     }
-                    $each['query'] = http_build_query($info);
-                    $content = str_replace($match[0],$this->build_url($each),$content);
-                }
-             }
-            $content = $content;
+                 //}
+                 return $newlink;
+            }
+            , $content);
+            
         }
         return $content;
     }
