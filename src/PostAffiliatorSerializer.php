@@ -16,14 +16,16 @@ class PostAffiliatorSerializer extends PostSerializer
      */
     protected function getDefaultAttributes($post)
     {
+        $this->partners["example2.com"] = array("daffy","123");
         $this->partners["example.com"] = array("aff","123");
         $attributes = parent::getDefaultAttributes($post);
         $content = $attributes['content'];
         $all_urls = array();
-        preg_match_all('#\bhttps?://[^\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/))#', $content, $all_matches);
+        preg_match_all('#\bhttps?://[^\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/))#', $content, $all_matches,PREG_SET_ORDER);
         foreach( $all_matches as $match){
             $each = parse_url($match[0]);
             if(isset($each['host']) && array_key_exists( $each['host'], $this->partners)){
+                $query=array();
                 if(array_key_exists('query',$each) && ! is_null($each['query'])){
                     parse_str($each['query'],$query);
                 }
@@ -32,9 +34,7 @@ class PostAffiliatorSerializer extends PostSerializer
                 $each['query'] = http_build_query($query);
                 $content = str_replace($match[0],$this->build_url($each),$content);
             }
-            
-
-        }
+         }
         $attributes['content'] = $content;
         return $attributes;
     }

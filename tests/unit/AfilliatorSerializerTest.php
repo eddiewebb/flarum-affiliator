@@ -49,16 +49,24 @@ class AffiliatorSerializerTests extends TestCase
      */
     public function testSuffixAddedToNonQueryHttp()
     {
-        $this->post->shouldReceive('getAttribute')->with('content')->andReturn("Checkout https://example.com, it's awesome.");
-        $expected = "Checkout https://example.com?aff=123, it's awesome.";
+        $this->post->shouldReceive('getAttribute')->with('content')->andReturn("Checkout https://example2.com, it's awesome.");
+        $expected = "Checkout https://example2.com?daffy=123, it's awesome.";
         $output = $this->serializer->getAttributes($this->post);
-        $this->assertEquals($expected,$output,"The affiliate link was not inserted");
+        $this->assertEquals($expected,$output['content'],"The affiliate link was not inserted");
     }
 
     public function testSuffixAddedToQueryHttps()
     {
         $this->post->shouldReceive('getAttribute')->with('content')->andReturn("Checkout https://example.com?animal=dog, it's awesome.");
         $expected = "Checkout https://example.com?animal=dog&aff=123, it's awesome.";
+        $output = $this->serializer->getAttributes($this->post);
+        $this->assertEquals($expected,$output['content'],"The affiliate link was not inserted");
+    }
+
+    public function testSuffixAddedToMultipleUrls()
+    {
+        $this->post->shouldReceive('getAttribute')->with('content')->andReturn("Checkout https://example.com?animal=dog, it's awesome, better than https://example2.com, though admittedly not quite like http://example3.com");
+        $expected = "Checkout https://example.com?animal=dog&aff=123, it's awesome, better than https://example2.com?daffy=123, though admittedly not quite like http://example3.com";
         $output = $this->serializer->getAttributes($this->post);
         $this->assertEquals($expected,$output['content'],"The affiliate link was not inserted");
     }
