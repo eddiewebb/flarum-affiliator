@@ -47,12 +47,20 @@ class AffiliatorSerializerTests extends TestCase
     /**
      * @test
      */
-    public function testSuffixAdded()
+    public function testSuffixAddedToNonQueryHttp()
     {
-        $this->post->shouldReceive('formatContent')->andReturn( "Checkout http://site.com?aff=123, it's awesome.");
-        $expected = "Checkout http://site.com?aff=123, it's awesome.";
+        $this->post->shouldReceive('getAttribute')->with('content')->andReturn("Checkout https://example.com, it's awesome.");
+        $expected = "Checkout https://example.com?aff=123, it's awesome.";
         $output = $this->serializer->getAttributes($this->post);
         $this->assertEquals($expected,$output,"The affiliate link was not inserted");
+    }
+
+    public function testSuffixAddedToQueryHttps()
+    {
+        $this->post->shouldReceive('getAttribute')->with('content')->andReturn("Checkout https://example.com?animal=dog, it's awesome.");
+        $expected = "Checkout https://example.com?animal=dog&aff=123, it's awesome.";
+        $output = $this->serializer->getAttributes($this->post);
+        $this->assertEquals($expected,$output['content'],"The affiliate link was not inserted");
     }
 
     // ...
