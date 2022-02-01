@@ -4,7 +4,7 @@
 
 A [Flarum](http://flarum.org) extension that appends affiliate tracking information to all matching urls.
 
-![provide sample URL in settings to define host and affiliate info](https://github.com/eddiewebb/flarum-affiliator/raw/main/assets/settings.png)![replaces matching host, reghardless of url](https://github.com/eddiewebb/flarum-affiliator/raw/main/assets/matching.png)
+![provide sample URL in settings to define host and affiliate info](https://github.com/eddiewebb/flarum-affiliator/raw/main/assets/settings.png)![Users add/edit URLs normally, with no concern for affiliate](https://github.com/eddiewebb/flarum-affiliator/raw/main/assets/edit.png)![replaces matching host, reghardless of url](https://github.com/eddiewebb/flarum-affiliator/raw/main/assets/matching.png)
 
 ## Installation
 
