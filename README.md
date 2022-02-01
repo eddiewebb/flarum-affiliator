@@ -1,6 +1,6 @@
 # Affiliator Affiliate Link Manager for Flarum
 
-![License](https://img.shields.io/github/license/eddiewebb/flarum-affiliator) [![Latest Stable Version](https://img.shields.io/packagist/v/webbinaro/flarum-affiliator.svg)](https://packagist.org/packages/webbinaro/flarum-affiliator) [![Total Downloads](https://img.shields.io/packagist/dt/webbinaro/flarum-affiliator.svg)](https://packagist.org/packages/webbinaro/flarum-affiliator) [![Total Downloads](https://img.shields.io/packagist/dt/webbinaro/flarum-affiliator.svg)](https://packagist.org/packages/webbinaro/flarum-affiliator) [![Monthly Downloads](https://img.shields.io/packagist/dm/webbinaro/flarum-affiliator)](https://packagist.org/packages/webbinaro/flarum-affiliator)
+![License](https://img.shields.io/github/license/eddiewebb/flarum-affiliator) [![Latest Stable Version](https://img.shields.io/packagist/v/webbinaro/flarum-affiliator.svg)](https://packagist.org/packages/webbinaro/flarum-affiliator) [![Total Downloads](https://img.shields.io/packagist/dt/webbinaro/flarum-affiliator.svg)](https://packagist.org/packages/webbinaro/flarum-affiliator)  [![Monthly Downloads](https://img.shields.io/packagist/dm/webbinaro/flarum-affiliator)](https://packagist.org/packages/webbinaro/flarum-affiliator)
 
 A [Flarum](http://flarum.org) extension that appends affiliate tracking information to all matching urls.
 
