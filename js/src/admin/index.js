@@ -1,6 +1,7 @@
-app.initializers.add('webbinaro/flarum-affiliator', () => {
-  console.log('[webbinaro/flarum-affiliator] Hello, admin!');
+import app from 'flarum/admin/app';
 
+app.initializers.add('webbinaro/flarum-affiliator', () => {
+  
   app.extensionData
   .for('webbinaro-affiliator')
   .registerSetting(
