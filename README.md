@@ -26,4 +26,4 @@ php flarum cache:clear
 
 - [Packagist](https://packagist.org/packages/webbinaro/flarum-affiliator)
 - [GitHub](https://github.com/webbinaro/flarum-affiliator)
-- [Discuss](https://discuss.flarum.org/d/29656-affiliatorer-age-verification-for-flarum-forum)
+- [Discuss](https://discuss.flarum.org/d/30000-affiliate-link-manager)
