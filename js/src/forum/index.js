@@ -1,5 +1,3 @@
 import app from 'flarum/forum/app';
 
-app.initializers.add('webbinaro/flarum-affiliator', () => {
-
-});
+app.initializers.add('webbinaro/flarum-affiliator', () => {});
